@@ -207,14 +207,24 @@ static CGFloat allW;    // 整个图表宽度
         
         CGFloat width = everyX <= 20 ? 10: 20;
         
-        CGRect rect = CGRectMake(point.x - width / 2, point.y, width, (CGRectGetHeight(myFrame) -  kMargin - point.y));
-        
-        UIBezierPath *path = [UIBezierPath bezierPathWithRect:rect];
+        UIBezierPath *path = [UIBezierPath bezierPath];
+        [path moveToPoint:CGPointMake(point.x, point.y+(CGRectGetHeight(myFrame) -  kMargin - point.y))];
+        [path addLineToPoint:CGPointMake(point.x, point.y)];
         
         CAShapeLayer *layer = [[CAShapeLayer alloc] init];
         layer.path = path.CGPath;
-        layer.strokeColor = [UIColor whiteColor].CGColor;
-        layer.fillColor = [UIColor yellowColor].CGColor;
+        layer.strokeColor = [UIColor yellowColor].CGColor;
+        layer.lineWidth = width;
+        layer.fillColor = [UIColor clearColor].CGColor;
+        
+        CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+        pathAnimation.duration = 1.5;
+        pathAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        pathAnimation.fromValue = [NSNumber numberWithFloat:0.0f];
+        pathAnimation.toValue = [NSNumber numberWithFloat:1.0f];
+        pathAnimation.autoreverses = NO;
+        
+        [layer addAnimation:pathAnimation forKey:@"strokeEndAnimation"];
         
         [self.bgView.layer addSublayer:layer];
 
